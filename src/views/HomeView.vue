@@ -1,228 +1,251 @@
-<style>
-.homeComponent__users {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  grid-gap: 1rem;
-}
-
-.homeComponent__creation {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  background-color: #57b154;
-  height: 30px;
-  width: 180px;
-  border: none;
-  text-align: center;
-  margin: 10px 0;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-}
-</style>
-
 <template>
-  <div class="homeComponent">
-    <!-- <div class="homeComponent__filter">
-      <FilterEmployee :country="country" @filterInformation="getUsersByFilter($event)" />
+  <div class="homePage">
+    <div class="homePage__flex">
+      <div class="homePage__item">
+        <i class="homePage__icon fa-regular fa-stars"></i>
+        <span class="homePage__item-p">La lectura es un viaje</span>
+        hacia la imaginación, donde cada página es una nueva aventura que nos
+        lleva a lugares inexplorados y nos permite conocer nuevas ideas y
+        perspectivas
+
+        <button class="homePage__button" @click="$route.push('/resume')">
+          Ver libros Prestados
+        </button>
+      </div>
+    </div>
+    <div class="homePage__search">
+      <input
+        class="homePage__search-input"
+        v-model="search"
+        type="text"
+        placeholder="Buscar Libro nombre,detalle,autor"
+      />
     </div>
 
-    <div class="homeComponent__creation" @click="showInformationModal('add')">
-      Crear empleado <i class="fa-solid fa-user-plus"></i>
+    <div class="homePage__books">
+      <button class="homePage__books-create" @click="openModal()">
+        <i class="fa-solid fa-square-plus"></i>
+        Nuevo libro
+      </button>
     </div>
 
-    <modalFormEmployeeVue v-if="showModal" :action="actionModal" :informationModal="informationForModal"
-      :all-country="country" :show-modal="showModal" @closeModal="actionModals()"
-      @sendChanges="createUserInformation($event)" />
+    <modal
+      @onSubmit="confirmButton($event)"
+      @onCancel="cancelButton()"
+      v-if="showModal"
+      :is-cancel="false"
+      ref="modal"
+    >
+      <template v-slot:body>
+        <div class="modalForm">
+          <button @click="cancelButton()">X</button>
+          <h2>Formulario de creacion de Libros</h2>
+          <hr />
+          <form class="modalForm__info">
+            <div
+              class="modalForm__info-item"
+              v-for="(item, index) in inputsOptions"
+              :key="index"
+            >
+              <label for="name">{{ item.placeholder }}:</label>
+              <input
+                :id="item.name"
+                type="text"
+                class="modalForm__info-input"
+                :placeholder="item.placeholder"
+                :name="item.name"
+              />
+            </div>
+            <div class="modalForm__info-item">
+              <label for="category">Categoria</label>
+              <select
+                name="category"
+                id="category"
+                class="modalForm__info-input"
+              >
+                <option v-for="(item, idx) in categories" :key="idx">
+                  {{ item }}
+                </option>
+              </select>
+            </div>
+          </form>
+          <button class="modalForm__info-send" @click="createBook($event)">
+            Crear Libro
+          </button>
+        </div>
+      </template>
+    </modal>
 
-    <div class="homeComponent__users">
-      <CardEmployee v-for="user in usersData" :key="user + Math.random()" @deleteUser="deleteUserById($event)"
-        @openModal="openModalEditUser($event)" :information="user" />
-    </div> -->
+    <detailResume
+      v-if="informacion.length"
+      :cardBooks="informacion"
+    ></detailResume>
   </div>
 </template>
-
 <script>
-// import CardEmployee from '@/components/cardEmployee.vue'
-// import FilterEmployee from '@/components/filterEmployee.vue'
-// import modalFormEmployeeVue from '@/components/modalFormEmployee.vue'
-import Swal from "sweetalert2";
-import { country } from "../assets/js/country";
-
+import modal from "../components/modal.vue";
+import detailResume from "../components/detailHome/detailResume.vue";
 export default {
-  name: "HomeView",
   components: {
-    // FilterEmployee,
-    // CardEmployee,
-    // modalFormEmployeeVue,
+    modal,
+    detailResume,
   },
   data() {
     return {
-      returnData: "",
-      usersData: [],
       showModal: false,
-      informationForModal: {},
-      actionModal: "",
-      url: "http://localhost:3000/api/v1/",
-      country: [],
+      search: "",
+      inputsOptions: [
+        { name: "name", placeholder: "Nombre" },
+        { name: "author", placeholder: "Autor del libro" },
+        { name: "description", placeholder: "Descripción" },
+        { name: "urlImage", placeholder: "Url Imagen" },
+      ],
+      categories: [
+        "Romance",
+        "Terror",
+        "Comedia",
+        "Auto-ayuda",
+        "Novelas",
+        "Aventura",
+      ],
+      informacion: [],
     };
   },
+  mounted() {
+    this.getBooksByFiltes();
+  },
   methods: {
-    getAllEmployees() {
-      fetch(this.url + "users")
-        .then((response) => response.json())
-        .then((data) => {
-          this.usersData = data.information;
-        })
-        .catch((error) => console.log(error, "error"));
+    confirmButton() {},
+    cancelButton() {
+      this.showModal = false;
     },
-
-    getUsersByFilter(filter) {
-      fetch(this.url + "users/filter", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(filter),
-      })
-        .then((e) => e.json())
-        .then((data) => {
-          this.usersData = data.information;
+    openModal() {
+      this.showModal = true;
+    },
+    async getBooksByFiltes() {
+      const query = `?search=${this.search}`;
+      await this.$axios
+        .get("books" + query)
+        .then((e) => {
+          const { data } = e;
+          console.log(data);
+          this.informacion = data.information;
         })
         .catch((e) => {
-          Swal.fire({
-            text: e.message,
+          e;
+          this.$Swal.fire({
+            text: "Rectifica la informacion suministrada",
             icon: "error",
             confirmButtonColor: "#0079ff",
           });
         });
     },
-    showInformationModal() {
-      this.showModal = !this.showModal;
-      this.actionModal = "create";
-    },
 
-    actionModals(status) {
-      this.showModal = status;
-      this.informationForModal = {};
-      this.actionModal = "";
-    },
-
-    deleteUserById(id) {
-      Swal.fire({
-        title: "¿Esta Seguro?",
-        text: "Si elimina el Usuario No se podra Recuperar",
-        icon: "info",
-        showCancelButton: true,
-        iconColor: "#bd0909",
-        confirmButtonColor: "#bd0909",
-        cancelButtonColor: "#5b5957",
-        confirmButtonText: "Sí, Eliminar!",
-        cancelButtonText: "Cancelar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          fetch(this.url + "users", {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            method: "DELETE",
-            body: JSON.stringify(id),
-          });
-          this.usersData = this.usersData.filter((e) => e._id !== id._id);
-        }
-      });
-    },
-    createUserInformation({ information, type }) {
-      if (type == "create") {
-        fetch(this.url + "users/create", {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          method: "post",
-          body: JSON.stringify(information),
-        })
-          .then((e) => e.json())
-          .then((data) => {
-            if (data.error) throw new Error(data.message);
-            Swal.fire({
-              text: "Se ha Actualizado el usuario Correctamente",
-              icon: "success",
-              confirmButtonColor: "#0079ff",
-            });
-            this.usersData.push(data.information);
-            this.actionModals(false);
-          })
-          .catch((e) => {
-            Swal.fire({
-              text: e.message,
-              icon: "error",
-              confirmButtonColor: "#0079ff",
-            });
-          });
-      }
-      if (type === "edit") {
-        this.updateProfileEmployee(information);
-      }
-    },
-    updateProfileEmployee(info) {
-      fetch(this.url + "users", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "post",
-        body: JSON.stringify(info),
-      })
-        .then((e) => e.json())
-        .then((data) => {
-          if (data.error) throw new Error(data.message);
-          Swal.fire({
-            text: "Se ha Editado el usuario Correctamente",
+    async createBook(event) {
+      event.preventDefault();
+      const element = document.querySelector(`.modalForm__info`);
+      const valueForm = new FormData(element);
+      await this.$axios
+        .post("books/create", valueForm)
+        .then((e) => {
+          console.log(e);
+          this.$Swal.fire({
+            text: "Creado Correctamente",
             icon: "success",
             confirmButtonColor: "#0079ff",
           });
-          const index = this.usersData.findIndex(
-            (e) => e._id == data.information._id
-          );
-          this.usersData[index] = data.information;
-          this.actionModals(false);
         })
-        .catch((e) => {
-          Swal.fire({
-            text: e.message,
+        .catch(() => {
+          this.$Swal.fire({
+            text: "Rectifica la informacion suministrada",
             icon: "error",
             confirmButtonColor: "#0079ff",
           });
         });
     },
-
-    openModalEditUser(user) {
-      this.showModal = true;
-      this.informationForModal = user;
-      this.actionModal = "edit";
-    },
-    getCountryApiPublic() {
-      fetch("https://restcountries.com/v3.1/all")
-        .then((response) => response.json())
-        .then((data) => {
-          this.country = data.map((e) => e.name.common);
-        })
-        .catch((error) => {
-          console.log("la api no esta disponible se usara un archivo local");
-          error;
-          this.country = country.countries.map((e) => e.name);
-        });
-    },
-  },
-
-  mounted() {
-    // this.getAllEmployees()
-    // this.getCountryApiPublic()
   },
 };
 </script>
+<style lang="scss">
+.modalForm {
+  width: 400px;
+  height: 300px;
+  &__info {
+    &-send {
+      background-color: #146ebe;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      color: white;
+    }
+    &-item {
+      display: grid;
+      margin-bottom: 5px;
+      label {
+        text-align: start;
+      }
+    }
+    &-input {
+      border: none;
+      border-bottom: 2px solid black;
+      outline: none;
+    }
+  }
+}
+
+.homePage {
+  &__flex {
+    display: flex;
+    justify-content: center;
+  }
+  &__books {
+    padding: 10px;
+    &-create {
+      color: white;
+      background-color: #146ebe;
+      width: 150px;
+      height: 30px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+  }
+  &__item {
+    padding: 10px;
+    align-self: center;
+    background-color: #ffd43b;
+    width: 80%;
+    height: 70px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 50px;
+
+    &-p {
+      font-weight: bold;
+    }
+  }
+  &__search {
+    &-input {
+      border-radius: 5px;
+      padding: 5px;
+      margin: 5px;
+      width: 30%;
+    }
+  }
+  &__books {
+    margin-top: 10px;
+    display: flex;
+    background-color: #f0f1f3;
+  }
+  &__button {
+    padding: 5px;
+    border: none;
+    background-color: white;
+    border-radius: 5px;
+    color: black;
+  }
+
+  &__icon {
+    background-color: #ffd43b;
+  }
+}
+</style>

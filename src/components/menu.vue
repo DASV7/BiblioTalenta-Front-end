@@ -1,0 +1,60 @@
+<template>
+  <div class="headerNav">
+    <img
+      class="headerNav__img"
+      src="https://magv1-prod.s3.amazonaws.com/image_assets/files/10632/medium-nuevo-logo-talenta-.jpg?1614979316"
+      alt="Logo talenta"
+    />
+    <div
+      class="headerNav__item"
+      v-for="(item, index) in optionsMenu"
+      :key="index"
+      @click="goRouter(item)"
+    >
+      <i :class="item.icon"></i>
+      {{ index }}
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "headerNav",
+  data() {
+    return {
+      optionsMenu: {
+        Inicio: { icon: "fa-solid fa-house", route: "/home" },
+        Resumen: { icon: "fa-solid fa-calendar-days", route: "/detail" },
+      },
+      activeRoute: "",
+    };
+  },
+  methods: {
+    goRouter(route) {
+      if (this.activeRoute !== route.route) {
+        this.activeRoute = route.route;
+        this.$router.push(this.activeRoute);
+      }
+    },
+  },
+};
+</script>
+<style lang="scss">
+.headerNav {
+  display: flex;
+  padding: 10px;
+  background-color: white;
+  border-bottom: 1px solid #00000031;
+  width: 100%;
+  height: 40px;
+
+  &__img {
+    height: 30px;
+  }
+  &__item {
+    padding: 7px;
+    font-weight: 300;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+}
+</style>

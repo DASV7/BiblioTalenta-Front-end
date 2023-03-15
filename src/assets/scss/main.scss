@@ -81,3 +81,41 @@ h2 {
 * {
     box-sizing: border-box;
 }
+
+
+@mixin Row($justify: center, $align: center) {
+    display: flex;
+    flex-direction: row;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin Column($justify: center, $align: center) {
+    display: flex;
+    flex-direction: column;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin ButtonStyle() {
+    color: white;
+    outline: none;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    margin: 0 auto;
+    padding: 15px/2 0;
+    outline-style: none;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+
+    &:hover {
+        opacity: 0.7;
+    }
+}

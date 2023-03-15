@@ -4,17 +4,17 @@ const ajax = axios.create({
   baseURL: process.env.VUE_APP_HOST + process.env.VUE_APP_API_IP,
   headers: {
     "Content-Type": "application/json",
-    "auth-jwt": localStorage.getItem("auth-jwt") || null,
+    "jwt": localStorage.getItem("jwt") || null,
     app: "autologin",
   },
 });
 
 ajax.interceptors.request.use(
   config => {
-    let token = localStorage.getItem("auth-jwt") || null;
+    let token = localStorage.getItem("jwt") || null;
 
     if (token) {
-      config.headers["auth-jwt"] = `${token}`;
+      config.headers["jwt"] = `${token}`;
     }
 
     return config;

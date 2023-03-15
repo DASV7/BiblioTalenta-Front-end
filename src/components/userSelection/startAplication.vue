@@ -117,6 +117,7 @@ export default {
       const element = document.querySelector(`#${form}`);
       const valueForm = new FormData(element);
       const route = form === "createUser" ? "/users/create" : "/login";
+
       await this.$axios
         .post(route, valueForm)
         .then((e) => {
@@ -129,6 +130,8 @@ export default {
             confirmButtonColor: "#0079ff",
           });
           localStorage.setItem("jwt", e.data.jwt);
+          this.$store.commit("asingValueToken", e.data.jwt);
+
           this.$router.push("/home");
         })
         .catch(() => {
