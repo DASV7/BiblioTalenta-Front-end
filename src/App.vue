@@ -1,3 +1,19 @@
+<template>
+  <div id="app">
+    <headerNav></headerNav>
+    <router-view />
+  </div>
+</template>
+<script>
+import headerNav from "./components/menu.vue";
+export default {
+  name: "app",
+  components: {
+    headerNav,
+  },
+};
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -20,28 +36,3 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 </style>
-
-<template>
-  <div id="app">
-    <startAplication></startAplication>
-
-    <!-- <headerCidenet /> -->
-
-    <!-- <router-link to="/">Consulta de Empleados</router-link> |
-      <router-link to="/about">Más informacion</router-link> -->
-
-    <router-view />
-  </div>
-</template>
-<script>
-// import headerCidenet from "./components/headerCidenet.vue"
-
-import startAplication from "./components/userSelection/startAplication";
-export default {
-  name: "app",
-  components: {
-    // headerCidenet
-    startAplication,
-  },
-};
-</script>

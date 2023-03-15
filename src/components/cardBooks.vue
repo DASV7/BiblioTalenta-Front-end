@@ -1,16 +1,16 @@
 <style lang="scss">
 .cardUser {
-  width: 230px;
-  height: 230px;
+  width: 200px;
+  height: 200px;
   border: 1px solid #000;
   border-radius: 10px;
 
   &__img {
     &-item {
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
       object-fit: cover;
-      border-radius: 50%;
+      border-radius: 90%;
       border: 1px solid #ccc;
     }
   }
@@ -44,26 +44,15 @@
     font-size: 10px;
   }
 }
-
-// .flex {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   gap: 3px;
-//   height: 30px;
-// }
 </style>
 
 <template>
   <div class="cardUser">
     <div class="cardUser__img">
-      <img
-        class="cardUser__img-item"
-        src="https://cdn.pixabay.com/photo/2017/11/10/05/48/user-2935527_1280.png"
-      />
+      <img class="cardUser__img-item" :src="information.urlImage" />
     </div>
     <div class="cardUser__name">
-      {{ information?.first_name }} {{ information?.surname }}
+      {{ information?.name }}
     </div>
     <div class="cardUser__actions flex">
       <button class="cardUser__actions-add flex" @click="editUser()">

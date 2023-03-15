@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/login.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +9,7 @@ const ifNotAuthenticated = (to, from, next) => {
     next("/login");
     return;
   }
+
   next();
 };
 
@@ -22,7 +23,13 @@ const routes = [
     path: '/home',
     name: 'home ',
     beforeEnter: ifNotAuthenticated,
-    component: () => import('../views/AboutView.vue')
+    component: () => import('../views/homeView.vue')
+  },
+  {
+    path: '/detail',
+    name: 'home ',
+    beforeEnter: ifNotAuthenticated,
+    component: () => import('../views/historyBooks.vue')
   }
 ]
 
