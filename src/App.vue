@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <headerNav></headerNav>
+    <headerNav v-if="$route.path !== '/'"></headerNav>
     <router-view />
   </div>
 </template>
@@ -10,6 +10,21 @@ export default {
   name: "app",
   components: {
     headerNav,
+  },
+  mounted() {
+    if (
+      localStorage.getItem("jwt") != null &&
+      localStorage.getItem("jwt") != "undefined"
+    ) {
+      this.$store.commit("asingValueToken", localStorage.getItem("jwt"));
+      if (this.$route.path !== "/home") {
+        this.$router.push("/home");
+      }
+    } else {
+      if (this.$route.path !== "/") {
+        this.$router.push("/");
+      }
+    }
   },
 };
 </script>
