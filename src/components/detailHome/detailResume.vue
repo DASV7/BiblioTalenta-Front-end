@@ -4,6 +4,7 @@
       <cardComponent
         @openModal="openModalEvent($event)"
         @deleteBook="deleteBooks($event)"
+        @borrowedBook="borrowedBooks($event)"
         v-for="(item, index) in cardBooks"
         :key="index"
         :information="item"
@@ -102,6 +103,28 @@ export default {
             confirmButtonColor: "#0079ff",
           });
           this.cancelButton();
+        })
+        .catch((e) => {
+          e;
+          this.$Swal.fire({
+            text: "Rectifica la informacion suministrada",
+            icon: "error",
+            confirmButtonColor: "#0079ff",
+          });
+        });
+    },
+    async borrowedBooks(event) {
+      const info = { ...event, idUser: this.$store.state.token._id };
+      await this.$axios
+        .post("books/borrowedBook", info)
+        .then(() => {
+          this.showModal = false;
+          this.$Swal.fire({
+            text: "Actualicado correctamente",
+            icon: "success",
+            confirmButtonColor: "#0079ff",
+          });
+          this.$emit("updateBook", info);
         })
         .catch((e) => {
           e;

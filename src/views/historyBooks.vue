@@ -1,11 +1,15 @@
 <template>
   <div class="detailBook">
     <div class="detailBook__container">
-      <div class="detailBook__item" v-for="(item, index) in 15" :key="index">
-        <div class="">Nombre:</div>
-        <div class="">Diego</div>
-        <div class="">Devolver</div>
-        <div class="">Remover</div>
+      <h3>Este es el resumen de los libros que se encuentran prestados</h3>
+      <div
+        class="detailBook__item"
+        v-for="(item, index) in informationBooks"
+        :key="index"
+      >
+        <div class="">Nombre:{{ item.name }}</div>
+        <div class="">Categoria:{{ item.category }}</div>
+        <div class="">Autor:{{ item.author }}</div>
       </div>
     </div>
   </div>
@@ -14,16 +18,17 @@
 export default {
   name: "detailBook",
   data() {
-    return {};
+    return {
+      informationBooks: [],
+    };
   },
   methods: {
     async getInformationBooks() {
-      
       if (this.$store.state.token.employee) {
         await this.$axios
           .post("books/borrowed")
           .then((e) => {
-            console.log(e.information.data);
+            this.informationBooks = e.data.information;
           })
           .catch((e) => {
             e;
@@ -49,7 +54,8 @@ export default {
     gap: 5px;
   }
   &__item {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     justify-content: space-around;
     align-items: center;
     border: 1px solid black;

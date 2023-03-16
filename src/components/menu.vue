@@ -26,7 +26,6 @@ export default {
     return {
       optionsMenu: {
         Inicio: { icon: "fa-solid fa-house", route: "/home" },
-        Resumen: { icon: "fa-solid fa-calendar-days", route: "/detail" },
       },
       activeRoute: "",
     };
@@ -43,6 +42,14 @@ export default {
       console.clear();
       this.$router.push("/");
     },
+  },
+  beforeMount() {
+    if (this.$store.state.token.employee) {
+      this.optionsMenu["Resumen"] = {
+        icon: "fa-solid fa-calendar-days",
+        route: "/detail",
+      };
+    }
   },
 };
 </script>

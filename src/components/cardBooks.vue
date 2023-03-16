@@ -17,7 +17,7 @@
       </button>
     </div>
     <div class="cardUser__actions-content" v-else>
-      <button @click="deleteCardUser()" class="cardUser__actions-delete flex">
+      <button @click="borrowedBook()" class="cardUser__actions-delete flex">
         <p>
           {{
             information?.whoHave == $store.state.token?._id
@@ -57,6 +57,9 @@ export default {
     editUser() {
       this.$emit("openModal", this.information);
     },
+    borrowedBook(){
+      this.$emit("borrowedBook", this.information);
+    }
   },
 };
 </script>

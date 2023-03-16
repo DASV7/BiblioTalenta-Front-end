@@ -14,11 +14,12 @@
         class="homePage__search-input"
         v-model="search"
         type="text"
+        @input="loadInformationFilter()"
         placeholder="Buscar Libro nombre,detalle,autor"
       />
     </div>
 
-    <div class="homePage__books">
+    <div class="homePage__books" v-if="$store.state.token?.employee">
       <button class="homePage__books-create" @click="openModal()">
         <i class="fa-solid fa-square-plus"></i>
         Nuevo libro
@@ -75,6 +76,7 @@
     <detailResume
       v-if="informacion.length"
       @deleteBook="deleteBook($event)"
+      @updateBook="updateStatus($event)"
       :cardBooks="informacion"
     ></detailResume>
   </div>
@@ -138,6 +140,15 @@ export default {
     },
     deleteBook(event) {
       this.informacion = this.informacion.filter((e) => e._id !== event);
+    },
+    updateStatus(event) {
+      const position = this.informacion.findIndex((e) => e._id == event._id);
+      this.informacion[position].whoHave = this.informacion[position].whoHave
+        ? 0
+        : event.idUser;
+    },
+    async loadInformationFilter() {
+      console.log("por desarrollar");
     },
 
     async createBook(event) {
