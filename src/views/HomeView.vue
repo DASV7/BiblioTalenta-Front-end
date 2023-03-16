@@ -13,6 +13,7 @@
       <input
         class="homePage__search-input"
         v-model="search"
+        :disabled="true"
         type="text"
         @input="loadInformationFilter()"
         placeholder="Buscar Libro nombre,detalle,autor"
