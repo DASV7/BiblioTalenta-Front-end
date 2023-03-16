@@ -72,7 +72,7 @@
               @click="actionbutton('signIn')"
               id="signIn"
             >
-              Crear cuenta
+              Inicia Sesion
             </button>
           </div>
           <div class="overlay-panel overlay-right">
@@ -121,6 +121,7 @@ export default {
       await this.$axios
         .post(route, valueForm)
         .then((e) => {
+          e;
           this.$Swal.fire({
             text:
               form === "createUser"
@@ -130,9 +131,8 @@ export default {
             confirmButtonColor: "#0079ff",
           });
           localStorage.setItem("jwt", e.data.jwt);
-          this.$store.commit("asingValueToken", e.data.jwt);
-
           this.$router.push("/home");
+          this.$store.commit("asingValueToken", e.data.jwt);
         })
         .catch(() => {
           this.$Swal.fire({

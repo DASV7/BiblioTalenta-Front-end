@@ -2,11 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/login.vue'
 
+
 Vue.use(VueRouter)
 
 const ifNotAuthenticated = (to, from, next) => {
-  if (!localStorage.getItem("jwt")) {
-    next("/login");
+  if (localStorage.getItem("jwt") == null || localStorage.getItem("jwt") == 'undefined') {
+    next("/");
     return;
   }
 
@@ -27,7 +28,7 @@ const routes = [
   },
   {
     path: '/detail',
-    name: 'home ',
+    name: 'detalle ',
     beforeEnter: ifNotAuthenticated,
     component: () => import('../views/historyBooks.vue')
   }

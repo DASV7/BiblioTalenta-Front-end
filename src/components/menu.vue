@@ -14,6 +14,9 @@
       <i :class="item.icon"></i>
       {{ index }}
     </div>
+    <button class="headerNav__button" @click="closeSesion()">
+      Cerrar Sesión
+    </button>
   </div>
 </template>
 <script>
@@ -35,6 +38,11 @@ export default {
         this.$router.push(this.activeRoute);
       }
     },
+    closeSesion() {
+      localStorage.clear();
+      console.clear();
+      this.$router.push("/");
+    },
   },
 };
 </script>
@@ -49,6 +57,15 @@ export default {
 
   &__img {
     height: 30px;
+  }
+  &__button {
+    position: absolute;
+    margin-top: 5px;
+    right: 10px;
+    border: none;
+    background-color: transparent;
+    border-bottom: 1px solid black;
+    cursor: pointer;
   }
   &__item {
     padding: 7px;

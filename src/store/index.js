@@ -16,7 +16,7 @@ export default new Vuex.Store({
       const jsonPayload = decodeURIComponent(
         window.atob(base64).split("").map(function (c) { return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2); }).join("")
       );
-      state.token = JSON.parse(jsonPayload).data[0]
+      state.token = JSON.parse(jsonPayload).data
     }
   },
   actions: {
